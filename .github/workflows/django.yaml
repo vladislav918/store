@@ -28,21 +28,19 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and run container
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Build Docker container
+        docker build -t store_web .
+        docker run -d --name store store_web
+
+    - name: Run tests
       run: |
-        docker build -t store .
-    - name: Run tests in Docker container
-      env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        docker exec store python manage.py test
+
+    - name: Stop and remove container
       run: |
-        docker run store python manage.py makemigrations
-        docker run store python manage.py test
+        docker stop store
+        docker rm store
