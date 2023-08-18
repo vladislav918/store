@@ -7,25 +7,9 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  test:
+  
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.9]
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: ${{ secrets.USER_DB }}
-          POSTGRES_PASSWORD: ${{ secrets.PASSWORD_DB }}
-          POSTGRES_DB: postgres
-          POSTGRES_HOST: db 
-        ports:
-          - 5432:5432
-
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - name: Checkout code
@@ -33,14 +17,7 @@ jobs:
 
     - name: Build and run container
       run: |
-        docker build -t store_web .
-        docker run -d --name store store_web
-
-    - name: Run tests
-      run: |
-        docker exec store python manage.py test
-
-    - name: Stop and remove container
-      run: |
-        docker stop store
-        docker rm store
+        docker-compose up
+        docker-compose exec web python manage.py migrations
+        docker-compose exec web python manage.py migrate
+        docker-compose exec web python manage.py test
