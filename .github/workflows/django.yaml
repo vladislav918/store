@@ -20,7 +20,8 @@ jobs:
         env:
           POSTGRES_USER: ${{ secrets.USER_DB }}
           POSTGRES_PASSWORD: ${{ secrets.PASSWORD_DB }}
-          POSTGRES_DB: news
+          POSTGRES_DB: postgres
+          POSTGRES_HOST: db 
         ports:
           - 5432:5432
 
@@ -36,11 +37,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run Tests
+    - name: Build Docker container
+      run: |
+        docker build -t store .
+    - name: Run tests in Docker container
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        PASSWORD: ${{ secrets.PASSWORD_DB }}
-        USER: ${{ secrets.USER_DB }}
       run: |
-        python manage.py makemigrations
-        python manage.py test
+        docker run store python manage.py makemigrations
+        docker run store python manage.py test
