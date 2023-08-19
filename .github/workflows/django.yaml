@@ -7,20 +7,27 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build and run container
-      env:
-          POSTGRES_USER: ${{ secrets.USER_DB }}
-          POSTGRES_PASSWORD: ${{ secrets.PASSWORD_DB }}
-          POSTGRES_DB: postgres
-          HOST_DB: ${{ secrets.HOST_DB }}
-      run: |
-        docker-compose up
-        docker-compose exec web python manage.py migrate
-        docker-compose exec web python manage.py test
+      - name: Build and run containers
+        run: |
+          docker-compose build
+          docker-compose up -d
+        env:
+          POSTGRES_HOST: db
+          network: mynetwork
+
+      - name: Run tests
+        run: |
+          docker-compose exec -T web sh -c "python manage.py test"
+        env:
+          POSTGRES_HOST: db
+          network: mynetwork
+
+      - name: Stop and remove containers
+        run: docker-compose down
