@@ -4,3 +4,6 @@ __pycache__/
 .env
 .dockerignore
 .vscode/
+/media
+/migrations/*.py
+!/migrations/__init__.py
