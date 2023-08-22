@@ -23,33 +23,39 @@
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <tbody>
-                        {% for item in cart %}
-                          {% with product=item.product %}
-                            <tr>
-                              <td>
-                                <a href="{{ product.get_absolute_url }}">
-                                  <img style="width: 100px;height: 122px; "class="img-fluid rounded-3" src="{% if product.image %}{{ product.image.url }}
-                                      {% else %}{% static 'img/no_image.png' %}{% endif %}">{{ product.name }}
-                                </a>
-                              </td>
-                              <td>
-                                <form action="{% url 'cart:cart_add' product.id %}" method="post">
-                                  {{ item.update_quantity_form.quantity }}
-                                  {{ item.update_quantity_form.override }}
-                                  <button type="submit" class="btn btn-primary">Update</button>
-                                  {% csrf_token %}
-                                </form>
-                              </td>
-                              <td>${{ item.price }}</td>
-                              <td>
-                                <form action="{% url 'cart:cart_remove' product.id %}" method="post">
-                                  <button type="submit" style="  background: none; border: none; padding: 0;" class="fa-solid fa-xmark"> </button>
-                                  {% csrf_token %}
-                                </form>
-                              </td>
-                            </tr>
-                          {% endwith %}
-                        {% endfor %}
+                        {% if cart|length == 0 %}
+
+                          <p class="text-center"><strong>В корзине пока пусто</strong></p>
+                          <p class="text-center">Загляните на главную, чтобы выбрать товары или найдите нужное в поиске</p>
+                        {% else %}
+                          {% for item in cart %}
+                            {% with product=item.product %}
+                              <tr>
+                                <td>
+                                  <a href="{{ product.get_absolute_url }}">
+                                    <img style="width: 100px;height: 122px; "class="img-fluid rounded-3" src="{% if product.image %}{{ product.image.url }}
+                                        {% else %}{% static 'img/no_image.png' %}{% endif %}">{{ product.name }}
+                                  </a>
+                                </td>
+                                <td>
+                                  <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                                    {{ item.update_quantity_form.quantity }}
+                                    {{ item.update_quantity_form.override }}
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    {% csrf_token %}
+                                  </form>
+                                </td>
+                                <td>${{ item.price }}</td>
+                                <td>
+                                  <form action="{% url 'cart:cart_remove' product.id %}" method="post">
+                                    <button type="submit" style="  background: none; border: none; padding: 0;" class="fa-solid fa-xmark"> </button>
+                                    {% csrf_token %}
+                                  </form>
+                                </td>
+                              </tr>
+                            {% endwith %}
+                          {% endfor %}
+                        {% endif %}  
                       </tbody>
                     </table>
                   </div>  

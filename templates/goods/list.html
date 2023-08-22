@@ -2,39 +2,77 @@
 {% load static %}
 
 {% block title %}
-  {% if category %}{{ category.name }}{% else %}Products{% endif %}
+{% if category %}{{ category.name }}{% else %}Products{% endif %}
 {% endblock %}
 
 {% block nav %}
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button"
-          data-bs-toggle="dropdown" aria-expanded="false">
-          Category
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <li>
-            <a class="dropdown-item" href="{% url 'goods:product_list' %}">All products</a>
-          </li>
-          {% for class in categories %}
-              <li>
-                <a class="dropdown-item" href="{{ class.get_absolute_url }}">{{ class.name }}</a>
-              </li>
-          {% endfor %}
-      </ul>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+    aria-expanded="false">
+    Category
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+    <li>
+      <a class="dropdown-item" href="{% url 'goods:product_list' %}">All products</a>
     </li>
-  {% endblock %}
-{% block content %}
-  <div id="main" class="product-list">
-    <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
-    {% for product in products %}
-      <div class="item">
-        <a href="{{ product.get_absolute_url }}">
-          <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
-        </a>
-        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-        <br>
-        ${{ product.price }}
-      </div>
+    {% for class in categories %}
+    <li>
+      <a class="dropdown-item" href="{{ class.get_absolute_url }}">{{ class.name }}</a>
+    </li>
     {% endfor %}
+  </ul>
+</li>
+<div class="container-fluid justify-content-center">
+  <ul class="navbar-nav" class="navbar navbar-expand-md navbar-light bg-light">
+    <li class="nav-item">
+      <form class="d-flex" action="{% url 'goods:search_results' %}" method="get">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </li>
+  </ul>
+</div>
+{% endblock %}
+{% block content %}
+  <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
+
+<section style="background-color: #eee;">
+  <div class="container py-5">
+    <div class="row justify-content-center mb-3">
+      <div class="col-md-12 col-xl-10">
+        <div class="card shadow-0 border rounded-3">
+          <div class="card-body">
+            {% for product in products %}
+              <div class="row mt-3">
+              <hr>
+                <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                  <div class="bg-image hover-zoom ripple rounded ripple-surface">
+                    <a href="{{ product.get_absolute_url }}">
+                      <img style="width: 110px;height: 210px;" class="w-100"src="{% if product.image %}{{ product.image.url }}{% else %}
+                      {% static 'img/no_image.png' %}{% endif %}">
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-6">
+                  <h5>{{ product.name }}</h5>
+                  <p class="text-truncate mb-4 mb-md-0">
+                    {{ product.description }}
+                  </p>
+                </div>
+                <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                  <div class="d-flex flex-row align-items-center mb-1">
+                    <h4 class="mb-1 me-1">${{ product.price }}</h4>
+                  </div>
+                  <div class="d-flex flex-column mt-4">
+                    <a class="btn btn-primary btn-sm" href="{{ product.get_absolute_url }}">Details</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
 {% endblock %}

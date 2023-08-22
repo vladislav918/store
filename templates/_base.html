@@ -35,17 +35,17 @@
                     <li class="nav-item">
                         {% with total_items=cart|length %}
                             {% if total_items > 0 %}
-                                <a class="nav-link active" href="{% url "cart:cart_detail" %}"><i class="bi bi-cart-fill"></i>
+                                <a class="nav-link active" href="{% url 'cart:cart_detail' %}"><i class="bi bi-cart-fill"></i>
                                     {{ total_items }} item{{ total_items|pluralize }},
                                     ${{ cart.get_total_price }}
                                 </a>
                             {% elif not order %}
-                                Your cart is empty.
+                            <a class="nav-link active" href="{% url 'cart:cart_detail' %}"> Your cart is empty.</a>
                             {% endif %}
                         {% endwith %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'account_login' %}"><i class="bi bi-cart-fill"></i>Sign in</a>
+                        <a class="nav-link active" href="{% url 'account_login' %}">Sign in <i class="fa-solid fa-user-secret"></i></a>
                     </li>
                 </ul>
             </div>
