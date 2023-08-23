@@ -91,8 +91,10 @@
                     <h5 class="text-uppercase">Total price</h5>
                     <h5>$ {{ cart.get_total_price }}</h5>
                   </div>
-                  <button type="button" class="btn btn-dark btn-block btn-lg"
-                    data-mdb-ripple-color="dark">Register</button>
+                  <a href="{% url 'orders:order_create' %}" class="btn btn-dark btn-block btn-lg"
+                  data-mdb-ripple-color="dark">
+                    Register
+                  </a>
                 </div>
               </div>
             </div>

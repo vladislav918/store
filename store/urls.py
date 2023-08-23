@@ -26,7 +26,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     # Local apps
     path('cart/', include('cart.urls', namespace='cart')),
-    path('goods/', include('goods.urls')),
+    path('goods/', include('goods.urls', namespace='goods')),
+    path('orders/', include('orders.urls', namespace='orders')),
     path('', include('pages.urls')),
 ] 
 

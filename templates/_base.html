@@ -44,9 +44,26 @@
                             {% endif %}
                         {% endwith %}
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'account_login' %}">Sign in <i class="fa-solid fa-user-secret"></i></a>
-                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Profile
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'account_reset_password' %}">Reser Password</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'account_logout' %}">Exit</a>
+                            </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'account_login' %}">Sign in <i class="fa-solid fa-user-secret"></i></a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

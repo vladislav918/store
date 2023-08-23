@@ -37,16 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     #Third-party
     'crispy_forms',
     'crispy_bootstrap5',
     'allauth',
     'allauth.account',
+
     #Local
     'accounts.apps.AccountsConfig',
     'pages.apps.PagesConfig',
     'goods.apps.GoodsConfig',
     'cart.apps.CartConfig',
+    'orders.apps.OrdersConfig',
 ]
 
 MIDDLEWARE = [
