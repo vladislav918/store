@@ -37,7 +37,7 @@
                             {% if total_items > 0 %}
                                 <a class="nav-link active" href="{% url 'cart:cart_detail' %}"><i class="bi bi-cart-fill"></i>
                                     {{ total_items }} item{{ total_items|pluralize }},
-                                    ${{ cart.get_total_price }}
+                                    $ {{ cart.get_total_price_after_discount|floatformat:2 }}
                                 </a>
                             {% elif not order %}
                             <a class="nav-link active" href="{% url 'cart:cart_detail' %}"> Your cart is empty.</a>

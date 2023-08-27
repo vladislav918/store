@@ -72,7 +72,7 @@
                   {% with total_items=cart|length %}
                     <div class="d-flex justify-content-between mb-4">
                       <h5 class="text-uppercase">Items {{ total_items }}</h5>
-                      <h5> $ {{ cart.get_total_price }}</h5>
+                      <h5> $ {{ cart.get_total_price_after_discount|floatformat:2 }}</h5>
                     </div>
                   {% endwith %}
 
@@ -80,16 +80,19 @@
 
                   <div class="mb-5">
                     <div class="form-outline">
-                      <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
+                      <form action="{% url 'coupons:apply' %}" method="post">
+                        {{ coupon_apply_form }}
+                        <input type="submit" value="Apply">
+                        {% csrf_token %}
+                      </form>
                       <label class="form-label" for="form3Examplea2">Enter your code</label>
                     </div>
                   </div>
 
                   <hr class="my-4">
-
                   <div class="d-flex justify-content-between mb-5">
                     <h5 class="text-uppercase">Total price</h5>
-                    <h5>$ {{ cart.get_total_price }}</h5>
+                    <h5>$ {{ cart.get_total_price_after_discount|floatformat:2 }}</h5>
                   </div>
                   <a href="{% url 'orders:order_create' %}" class="btn btn-dark btn-block btn-lg"
                   data-mdb-ripple-color="dark">

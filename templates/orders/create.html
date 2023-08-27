@@ -16,12 +16,12 @@
                 {% for item in cart %}
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ item.product.name }}
-                    <span >${{ item.total_price }}</span>
+                    <span >$ {{ cart.get_total_price_after_discount|floatformat:2 }}</span>
                   </li>
                 {% endfor %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   <strong>Grand Total</strong>
-                  <span class="badge bg-primary rounded-pill">${{ cart.get_total_price }}</span>
+                  <span class="badge bg-primary rounded-pill">$ {{ cart.get_total_price_after_discount|floatformat:2 }}</span>
                 </li>
             </ul>
         </div>
