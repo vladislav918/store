@@ -1,12 +1,12 @@
 from django.test import TestCase
 from django.urls import reverse
-from .models import Order, OrderItem
-from .forms import OrderCreateForm
-from cart.cart import Cart
-from goods.models import Product, Category
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
+from .models import Order, OrderItem
+from goods.models import Product, Category
+from .forms import OrderCreateForm
+from cart.cart import Cart
 
 
 class OrderCreateViewTestCase(TestCase):
@@ -35,7 +35,12 @@ class OrderCreateViewTestCase(TestCase):
             'city': 'Anytown',
         })
         order = Order.objects.first()
-        order_item = OrderItem.objects.create(order=order, product=self.product, quantity=1, price=self.product.price) 
+        order_item = OrderItem.objects.create(
+            order=order,
+            product=self.product,
+            quantity=1,
+            price=self.product.price
+        )
         self.assertEqual(order.first_name, 'John')
         self.assertEqual(order.last_name, 'Doe')
         self.assertEqual(order.email, 'johndoe@example.com')
@@ -45,7 +50,6 @@ class OrderCreateViewTestCase(TestCase):
         self.assertEqual(order_item.quantity, 1)
         self.assertEqual(order_item.price, 10)
         self.assertEqual(order_item.product, self.product)
-
 
     def test_order_create_view_with_unauthenticated_user(self):
         url = reverse('orders:order_create')

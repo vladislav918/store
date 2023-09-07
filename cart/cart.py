@@ -3,6 +3,7 @@ from django.conf import settings
 from goods.models import Product
 from coupons.models import Coupon
 
+
 class Cart:
     def __init__(self, request):
         self.session = request.session
@@ -52,7 +53,7 @@ class Cart:
 
     def get_total_price(self):
         return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
-    
+
     @property
     def coupon(self):
         if self.coupon_id:
@@ -61,7 +62,7 @@ class Cart:
             except Coupon.DoesNotExist:
                 pass
         return None
-        
+
     def get_discount(self):
         if self.coupon:
             return (self.coupon.discount / Decimal(100)) * self.get_total_price()

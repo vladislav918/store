@@ -37,14 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    #Third-party
+    # Third-party
     'crispy_forms',
     'crispy_bootstrap5',
     'allauth',
     'allauth.account',
-
-    #Local
+    'allauth.socialaccount',
+    'social_django',
+    'allauth.socialaccount.providers.vk',
+    # Local
     'accounts.apps.AccountsConfig',
     'pages.apps.PagesConfig',
     'goods.apps.GoodsConfig',
@@ -76,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
                 'cart.context_processors.cart',
             ],
         },
@@ -94,8 +96,8 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'db',  
-        'PORT': 5432,  
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
@@ -149,8 +151,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'pages:home'
+LOGOUT_REDIRECT_URL = 'pages:home'
 
 # django-crispy-forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
@@ -163,6 +165,8 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 60
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
-#cart
+# cart
 CART_SESSION_ID = 'cart'

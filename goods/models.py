@@ -4,8 +4,7 @@ from django.urls import reverse
 
 class Category(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200,unique=True)
-
+    slug = models.SlugField(max_length=200, unique=True)
 
     class Meta:
         ordering = ['name']
@@ -15,10 +14,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def get_absolute_url(self):
-        return reverse('goods:product_list_by_category',args=[self.slug])  
-    
+        return reverse('goods:product_list_by_category', args=[self.slug])
+
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
@@ -31,7 +30,6 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-
     class Meta:
         ordering = ['name']
         indexes = [
@@ -42,6 +40,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def get_absolute_url(self):
         return reverse('goods:product_detail', args=[self.id, self.slug])

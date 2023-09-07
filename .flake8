@@ -1,0 +1,11 @@
+[flake8]
+ignore = F841, F401
+exclude = 
+    .store,
+    .git,
+    .gitignore,
+    __pycache__,
+    migrations,
+
+
+max-line-length = 95

@@ -1,5 +1,5 @@
 {% extends '_base.html' %}
-
+{% load socialaccount %}
 {% load crispy_forms_tags %}
 
 {% block title %}Log In{% endblock title %}
@@ -11,5 +11,6 @@
         {{ form|crispy }}
         <button class="btn btn-success" type="submit">Log In</button>
     </form>
+    <a href="{% provider_login_url 'vk' %}"> Войти через VK </a>
     No account? <a style="color: black;" class="link active" href="{% url 'account_signup' %}">Create one</a> 
 {% endblock content %}
