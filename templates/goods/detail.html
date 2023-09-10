@@ -34,6 +34,11 @@
                           </div>
                         </div>
                   </div>
+                  <form method="post" action="{% url 'goods:product_detail' product.id product.slug %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">{% if is_favourite %}<i class="fas fa-heart fa-lg"></i>{% else %}<i class="far fa-heart fa-lg"></i>{% endif %}</button>
+                </form>
               </div>
           </div>
       </div>
