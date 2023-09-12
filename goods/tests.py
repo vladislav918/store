@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 from goods.models import Category, Product
 from cart.forms import CartAddProductForm
+from django.contrib.auth import get_user_model
 
 
 class TestProductListViews(TestCase):
@@ -108,8 +109,14 @@ class ProductDetailViewTestCase(TestCase):
             price=10,
             available=True,
         )
+        self.user = get_user_model().objects.create_user(
+            username='testuser',
+            email='testuser@example.com',
+            password='testpass'
+        )
 
     def test_product_detail_view(self):
+        self.client.login(username='testuser', password='testpass')
         response = self.client.get(
             reverse('goods:product_detail',
                     args=[self.product.id, self.product.slug],)
@@ -121,11 +128,13 @@ class ProductDetailViewTestCase(TestCase):
         self.assertIsInstance(response.context['cart_product_form'], CartAddProductForm)
 
     def test_product_detail_view_with_invalid_id(self):
+        self.client.login(username='testuser', password='testpass')
         url = reverse('goods:product_detail', args=[1000, 'invalid-slug'])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_product_detail_view_with_unavailable_product(self):
+        self.client.login(username='testuser', password='testpass')
         self.product.available = False
         self.product.save()
         response = self.client.get(
