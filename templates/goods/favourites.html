@@ -1,10 +1,7 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %}
-{% if category %}{{ category.name }}{% else %}Products{% endif %}
-{% endblock %}
-
+{% block title %}Favourites{% endblock %}
 {% block nav %}
 <li class="nav-item">
     <a class="nav-link active" aria-current="page" href="{% url 'goods:favourites' %}">Favourites</a>
@@ -37,7 +34,6 @@
 </div>
 {% endblock %}
 {% block content %}
-  <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
 <section style="background-color: #eee;">
   <div class="container py-5">
     <div class="row justify-content-center mb-3">

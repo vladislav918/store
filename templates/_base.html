@@ -53,6 +53,9 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li>
+                                <a class="dropdown-item" href="{% url 'accounts:profile' user.username %}">Profile</a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item" href="{% url 'account_reset_password' %}">Reser Password</a>
                             </li>
                             <li>

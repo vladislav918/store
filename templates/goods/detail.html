@@ -4,7 +4,37 @@
 {% block title %}
   {{ product.name }}
 {% endblock %}
-
+{% block nav %}
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'goods:favourites' %}">Favourites</a>
+</li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+    aria-expanded="false">
+    Category
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+    <li>
+      <a class="dropdown-item" href="{% url 'goods:product_list' %}">All products</a>
+    </li>
+    {% for class in categories %}
+    <li>
+      <a class="dropdown-item" href="{{ class.get_absolute_url }}">{{ class.name }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</li>
+<div class="container-fluid justify-content-center">
+  <ul class="navbar-nav" class="navbar navbar-expand-md navbar-light bg-light">
+    <li class="nav-item">
+      <form class="d-flex" action="{% url 'goods:search_results' %}" method="get">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </li>
+  </ul>
+</div>
+{% endblock %}
 {% block content %}
 <div class="container mt-5 mb-5">
   <div class="row d-flex justify-content-center">
@@ -19,6 +49,9 @@
                   </div>
                   <div class="col-md-6">
                       <div class="product p-4">
+                          <div class="mt-1 mb-3">
+                            <a href="{% url 'accounts:profile' product.author %}">{{ product.author }}</a>
+                          </div>
                           <div class="mt-4 mb-3"> <span class="text-uppercase text-muted brand">{{ product.category }}</span>
                               <h5 class="text-uppercase">{{ product.name }}</h5>
                               <div class="price d-flex flex-row align-items-center"> <span class="act-price">${{ product.price }}</span>
@@ -26,7 +59,7 @@
                           </div>
                           <p class="about">{{ product.description|linebreaks }}</p>
                           <div class="cart mt-4 align-items-center"> 
-                            <form action="{% url "cart:cart_add" product.id %}" method="post">
+                            <form action="{% url 'cart:cart_add' product.id %}" method="post">
                               {{ cart_product_form }}
                               {% csrf_token %}
                               <button type="submit" class="btn btn-danger text-uppercase mr-2 px-4">Add to cart</button> 
@@ -38,7 +71,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit">{% if is_favourite %}<i class="fas fa-heart fa-lg"></i>{% else %}<i class="far fa-heart fa-lg"></i>{% endif %}</button>
-                </form>
+                  </form>
               </div>
           </div>
       </div>

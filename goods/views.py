@@ -1,8 +1,9 @@
-from django.shortcuts import render,redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.views.generic import ListView
 from .models import Category, Product
 from cart.forms import CartAddProductForm
+from django.contrib.auth.decorators import login_required
 
 
 class SearchResultsListView(ListView):
@@ -30,6 +31,7 @@ def product_list(request, category_slug=None):
     return render(request, 'goods/list.html', context=context)
 
 
+@login_required
 def product_detail(request, id, slug):
     product = get_object_or_404(Product, id=id, slug=slug, available=True)
     if request.method == 'POST':
@@ -50,3 +52,12 @@ def product_detail(request, id, slug):
         'is_favourite': is_favourite,
     }
     return render(request, 'goods/detail.html', context=context)
+
+
+@login_required
+def favourites(request):
+    products = Product.objects.filter(favourites=request.user.id)
+    context = {
+        'products': products,
+    }
+    return render(request, 'goods/favourites.html', context=context)

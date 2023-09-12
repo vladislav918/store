@@ -24,7 +24,11 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category,
+        related_name='products',
+        on_delete=models.CASCADE,
+    )
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200)
     image = models.ImageField(upload_to='products/%Y/%m/%d', blank=True)
@@ -34,6 +38,12 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     favourites = models.ManyToManyField(User, related_name='favourites', blank=True)
+    author = models.ForeignKey(
+        User,
+        null=True,
+        related_name='author',
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         ordering = ['name']
