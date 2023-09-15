@@ -44,7 +44,7 @@
       <div class="col-md-12 col-xl-10">
         <div class="card shadow-0 border rounded-3">
           <div class="card-body">
-            {% for product in products %}
+            {% for product in page_obj %}
               <div class="row mt-3">
               <hr>
                 <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
@@ -76,5 +76,19 @@
       </div>
     </div>
   </div>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% for p in page_obj.paginator.page_range %}
+        {% if page_obj.number == p %}
+          <li class="page-link" class="page-link">{{ p }}</li>
+        {% else %}
+        <li class="page-link">
+           <a href="?page={{ p }}">{{ p }} </a> 
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+</div>
 </section>
 {% endblock %}

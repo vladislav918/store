@@ -4,6 +4,8 @@ from django.views.generic import ListView
 from .models import Category, Product
 from cart.forms import CartAddProductForm
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.contrib import messages
 
 
 class SearchResultsListView(ListView):
@@ -20,13 +22,16 @@ def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
     products = Product.objects.filter(available=True)
+    paginator = Paginator(products, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
     context = {
         'category': category,
         'categories': categories,
-        'products': products,
+        'page_obj': page_obj,
     }
     return render(request, 'goods/list.html', context=context)
 
@@ -37,8 +42,10 @@ def product_detail(request, id, slug):
     if request.method == 'POST':
         if product.favourites.filter(id=request.user.id).exists():
             product.favourites.remove(request.user)
+            messages.warning(request, 'Favourites removed.')
         else:
             product.favourites.add(request.user)
+            messages.success(request, 'Favourites updated.')
         return redirect('goods:product_detail', id=id, slug=slug)
 
     is_favourite = False
