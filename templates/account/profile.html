@@ -49,6 +49,8 @@
                                 Подписаться
                             </a>
                         {% endif %}
+                    {% else %}
+                      <a class="btn btn-primary" href="{% url 'accounts:profile_update' user.pk %}">Update</a>
                     {% endif %}
                   </div>
                 </div>
@@ -60,7 +62,9 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
           {% for product in products %}
             <div class="col">
-                <img style="width: 220px;height: 220px;" src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+              <img src="{% if products.image %}{{ products.image.url }}{% else %}
+                {% endif %}" width="250" />
+                
                 <div class="card-body">
                   <h5 class="card-title">{{ product.name }}</h5>
                   <p class="card-text">{{ product.description }}</p>

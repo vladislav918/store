@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
 from .models import Follow, CustomUser
 from goods.models import Product
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView
 
 
 def profile(request, username):
@@ -36,3 +38,12 @@ def profile_unfollow(request, username):
         if author != request.user:
             follower.delete()
     return redirect('accounts:profile', username=username)
+
+
+class ProfileUpdate(UpdateView):
+    model = CustomUser
+    fields = ['username', 'first_name', 'last_name', 'email']
+    template_name = 'account/profile_update.html'
+
+    def get_success_url(self):
+        return reverse_lazy('accounts:profile', kwargs={'username': self.object.username})
