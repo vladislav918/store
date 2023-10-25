@@ -10,12 +10,14 @@ services:
       - 8000:8000
     depends_on:
       - db
+      - redis
   db:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
-
+  redis:
+    image: redis:latest
 volumes:
   postgres_data:

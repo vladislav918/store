@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import socket  
 
 from pathlib import Path
 
@@ -26,17 +27,21 @@ SECRET_KEY = 'django-insecure-0%cjv)4u@4640e62n4jjjr*u7w^uzvzym!80!0%t6bt0j%npc@
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+INTERNAL_IPS = ['*']
 
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     # Third-party
     'crispy_forms',
     'crispy_bootstrap5',
@@ -54,6 +59,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -169,3 +175,15 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # cart
 CART_SESSION_ID = 'cart'
+
+# redis
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+REDIS_DB = 1
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        'LOCATION': 'redis://redis:6379/0',
+    }
+}

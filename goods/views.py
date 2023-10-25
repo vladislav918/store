@@ -6,6 +6,7 @@ from cart.forms import CartAddProductForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.views.decorators.cache import cache_page
 
 
 class SearchResultsListView(ListView):
@@ -63,8 +64,13 @@ def product_detail(request, id, slug):
 
 @login_required
 def favourites(request):
-    products = Product.objects.filter(favourites=request.user.id)
+    categories = Category.objects.filter(products__favourites=request.user.id).distinct()
+    products = []
+    for category in categories:
+        products.append(Product.objects.filter(category=category))
+
     context = {
         'products': products,
     }
+    
     return render(request, 'goods/favourites.html', context=context)

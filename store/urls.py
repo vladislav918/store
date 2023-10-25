@@ -25,6 +25,7 @@ urlpatterns = [
     # User management
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),
+    path("__debug__/", include("debug_toolbar.urls")),
     # Local apps
     path('coupons/', include('coupons.urls', namespace='coupons')),
     path('cart/', include('cart.urls', namespace='cart')),
@@ -34,4 +35,5 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

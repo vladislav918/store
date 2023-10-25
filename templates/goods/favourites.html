@@ -40,32 +40,36 @@
       <div class="col-md-12 col-xl-10">
         <div class="card shadow-0 border rounded-3">
           <div class="card-body">
-            {% for product in products %}
-              <div class="row mt-3">
-              <hr>
-                <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                  <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                    <a href="{{ product.get_absolute_url }}">
-                      <img style="width: 110px;height: 210px;" class="w-100"src="{% if product.image %}{{ product.image.url }}{% else %}
-                      {% static 'img/no_image.png' %}{% endif %}">
-                    </a>
+            {% for product_queryset in products %}
+              {% for product in product_queryset %}
+                <div class="row mt-3">
+                <hr>
+                  <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                    <div class="bg-image hover-zoom ripple rounded ripple-surface">
+                      <a href="{{ product.get_absolute_url }}">
+                        <img style="width: 110px;height: 210px;" class="w-100"src="{% if product.image %}{{ product.image.url }}{% else %}
+                        {% static 'img/no_image.png' %}{% endif %}">
+                      </a>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-lg-6 col-xl-6">
+                    <h5>{{ product.name }}</h5>
+                    <p class="text-truncate mb-4 mb-md-0">
+                      {{ product.description }}
+                    </p>
+                  </div>
+                  <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                    <div class="d-flex flex-row align-items-center mb-1">
+                      <h4 class="mb-1 me-1">${{ product.price }}</h4>
+                    </div>
+                    <div class="d-flex flex-column mt-4">
+                      <a class="btn btn-primary btn-sm" href="{{ product.get_absolute_url }}">Details</a>
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-6 col-lg-6 col-xl-6">
-                  <h5>{{ product.name }}</h5>
-                  <p class="text-truncate mb-4 mb-md-0">
-                    {{ product.description }}
-                  </p>
-                </div>
-                <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
-                  <div class="d-flex flex-row align-items-center mb-1">
-                    <h4 class="mb-1 me-1">${{ product.price }}</h4>
-                  </div>
-                  <div class="d-flex flex-column mt-4">
-                    <a class="btn btn-primary btn-sm" href="{{ product.get_absolute_url }}">Details</a>
-                  </div>
-                </div>
-              </div>
+              {% empty %}
+                <h2>Нет избранного</h2>
+              {% endfor %}
             {% endfor %}
           </div>
         </div>
