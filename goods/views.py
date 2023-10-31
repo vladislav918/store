@@ -1,12 +1,14 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Q
-from django.views.generic import ListView
 from .models import Category, Product
 from cart.forms import CartAddProductForm
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.views.decorators.cache import cache_page
+from django.views.generic import ListView
+from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.detail import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 class SearchResultsListView(ListView):
@@ -19,58 +21,100 @@ class SearchResultsListView(ListView):
         return Product.objects.filter(Q(name__icontains=query))
 
 
-def product_list(request, category_slug=None):
-    category = None
-    categories = Category.objects.all()
-    products = Product.objects.filter(available=True)
-    paginator = Paginator(products, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
-        products = products.filter(category=category)
-    context = {
-        'category': category,
-        'categories': categories,
-        'page_obj': page_obj,
-    }
-    return render(request, 'goods/list.html', context=context)
+class ProductListView(ListView):
+    model = Product
+    template_name = 'goods/list.html'
+    context_object_name = 'products'
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        categories = Category.objects.all()
+        category_slug = self.kwargs.get('category_slug')
+        if category_slug:
+            category = get_object_or_404(Category, slug=category_slug)
+            products = self.get_queryset().filter(category=category)
+            paginator = Paginator(products, self.paginate_by)
+            page_number = self.request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            context['category'] = category
+            context['categories'] = categories
+            context['page_obj'] = page_obj
+        return context
+
+    def get_queryset(self):
+        return self.model.objects.filter(available=True)
 
 
-@login_required
-def product_detail(request, id, slug):
-    product = get_object_or_404(Product, id=id, slug=slug, available=True)
-    if request.method == 'POST':
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'goods/detail.html'
+    context_object_name = 'product'
+    slug_url_kwarg = 'slug'
+    pk_url_kwarg = 'id'
+
+    def post(self, request, *args, **kwargs):
+        product = self.get_object()
         if product.favourites.filter(id=request.user.id).exists():
             product.favourites.remove(request.user)
             messages.warning(request, 'Favourites removed.')
         else:
             product.favourites.add(request.user)
             messages.success(request, 'Favourites updated.')
-        return redirect('goods:product_detail', id=id, slug=slug)
+        return redirect('goods:product_detail', id=product.id, slug=product.slug)
 
-    is_favourite = False
-    if product.favourites.filter(id=request.user.id).exists():
-        is_favourite = True
+    def get_object(self, queryset=None):
+        product = get_object_or_404(
+            Product,
+            id=self.kwargs.get('id'),
+            slug=self.kwargs.get('slug'),
+            available=True
+        )
+        return product
 
-    cart_product_form = CartAddProductForm()
-    context = {
-        'product': product,
-        'cart_product_form': cart_product_form,
-        'is_favourite': is_favourite,
-    }
-    return render(request, 'goods/detail.html', context=context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart_product_form'] = CartAddProductForm()
+        context['is_favourite'] = False
+        if self.object.favourites.filter(id=self.request.user.id).exists():
+            context['is_favourite'] = True
+        return context
 
 
-@login_required
-def favourites(request):
-    categories = Category.objects.filter(products__favourites=request.user.id).distinct()
-    products = []
-    for category in categories:
-        products.append(Product.objects.filter(category=category))
+class FavouritesListView(LoginRequiredMixin, ListView):
+    template_name = 'goods/favourites.html'
+    context_object_name = 'products'
 
-    context = {
-        'products': products,
-    }
-    
-    return render(request, 'goods/favourites.html', context=context)
+    def get_queryset(self):
+        categories = Category.objects.filter(
+            products__favourites=self.request.user.id).distinct()
+        products = []
+        for category in categories:
+            products.append(Product.objects.filter(category=category))
+        return products
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class ProductCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Product
+    fields = ['category', 'name', 'description', 'image', 'price']
+    success_message = 'Item successfully added!'
+    template_name = 'goods/create_goods.html'
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.author = self.request.user
+        if 'image' in self.request.FILES:
+            instance.image = self.request.FILES['image']
+        instance.save()
+        return super(ProductCreateView, self).form_valid(form)
+
+
+class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Product
+    fields = ['category', 'name', 'description', 'image', 'price']
+    success_message = 'Item successfully update!'
+    template_name = 'goods/update_goods.html'

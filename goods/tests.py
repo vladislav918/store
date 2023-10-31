@@ -1,8 +1,9 @@
 from mixer.backend.django import mixer
-from django.test import TestCase
+from django.test import TestCase, RequestFactory, Client
 from django.urls import reverse
 from goods.models import Category, Product
 from cart.forms import CartAddProductForm
+from goods.views import FavouritesListView
 from django.contrib.auth import get_user_model
 
 
@@ -114,6 +115,10 @@ class ProductDetailViewTestCase(TestCase):
             email='testuser@example.com',
             password='testpass'
         )
+        self.url = reverse(
+            'goods:product_detail',
+            kwargs={'id': self.product.id, 'slug': self.product.slug}
+        )
 
     def test_product_detail_view(self):
         self.client.login(username='testuser', password='testpass')
@@ -142,3 +147,60 @@ class ProductDetailViewTestCase(TestCase):
                     args=[self.product.id, self.product.slug],)
         )
         self.assertEqual(response.status_code, 404)
+
+    def test_post_add_favourite(self):
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.post(self.url)
+        self.product.refresh_from_db()
+        self.assertIn(self.user, self.product.favourites.all())
+        self.assertRedirects(response, self.url)
+
+    def test_post_remove_favourite(self):
+        self.client.login(username='testuser', password='testpass')
+        self.product.favourites.add(self.user)
+        response = self.client.post(self.url)
+        self.product.refresh_from_db()
+        self.assertNotIn(self.user, self.product.favourites.all())
+        self.assertRedirects(response, self.url)
+
+
+class TestFavouritesListView(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create(username='testuser')
+        self.category1 = Category.objects.create(name='category1', slug='category1')
+        self.category2 = Category.objects.create(name='category2', slug='category2')
+        self.product1 = Product.objects.create(
+            name='product1',
+            category=self.category1,
+            slug='product1',
+            price=10,
+            available=True
+        )
+        self.product2 = Product.objects.create(
+            name='product2',
+            category=self.category2,
+            slug='product2',
+            price=10,
+            available=True
+        )
+        self.product1.favourites.add(self.user)
+        self.product2.favourites.add(self.user)
+
+    def test_view(self):
+        request = RequestFactory().get('/')
+        request.user = self.user
+        view = FavouritesListView()
+        view.setup(request)
+        response = view.get(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.template_name[0], 'goods/favourites.html')
+        self.assertIn(self.product1, response.context_data['products'][0])
+
+    def test_get_queryset(self):
+        view = FavouritesListView()
+        view.request = RequestFactory().get('/')
+        view.request.user = self.user
+        queryset = view.get_queryset()
+        self.assertEqual(len(queryset), 2)
+        self.assertIn(self.product1, queryset[0])
+        self.assertIn(self.product2, queryset[1])

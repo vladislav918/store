@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.utils.text import slugify
 
 
 User = get_user_model()
@@ -58,3 +59,7 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('goods:product_detail', args=[self.id, self.slug])
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Product, self).save(*args, **kwargs)

@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}
+  Create goods
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create">
+</form>
+{% endblock %}
