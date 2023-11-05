@@ -1,25 +1,37 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from .models import Follow, CustomUser
 from goods.models import Product
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import UpdateView
+from django.views.generic import DetailView, UpdateView
+from django.db.models import Prefetch
 
 
-def profile(request, username):
-    user = get_object_or_404(CustomUser, username=username)
-    following = user.following.filter(user=request.user.id).exists()
-    followers_count = user.following.count()
-    products = Product.objects.filter(author=user.id)
-    products_count = products.filter(author=user.id).count()
-    context = {
-        'profile': user,
-        'following': following,
-        'followers_count': followers_count,
-        'products_count': products_count,
-        'products': products,
-    }
-    return render(request, 'account/profile.html', context=context)
+class ProfileDetailView(DetailView):
+    model = CustomUser
+    template_name = 'account/profile.html'
+    context_object_name = 'profile'
+
+    def get_object(self):
+        return get_object_or_404(CustomUser, username=self.kwargs.get('username'))
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related(
+            Prefetch('products', queryset=Product.objects.all(), to_attr='product_list')
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.object
+
+        context['following'] = Follow.objects.filter(
+            user=self.request.user,
+            author=user
+        ).exists()
+        context['followers_count'] = Follow.objects.filter(author=user).count()
+        context['products'] = Product.objects.filter(author=user, available=True)
+        context['products_count'] = context['products'].count()
+        return context
 
 
 @login_required

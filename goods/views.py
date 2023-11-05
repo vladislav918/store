@@ -4,9 +4,7 @@ from .models import Category, Product
 from cart.forms import CartAddProductForm
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.views.generic import ListView
-from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic.detail import DetailView
+from django.views.generic import DetailView, CreateView, UpdateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -118,3 +116,4 @@ class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     fields = ['category', 'name', 'description', 'image', 'price']
     success_message = 'Item successfully update!'
     template_name = 'goods/update_goods.html'
+    permission_required = 'goods.change_product'

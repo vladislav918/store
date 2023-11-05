@@ -1,14 +1,23 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from .models import OrderItem
 from .forms import OrderCreateForm
 from cart.cart import Cart
+from django.views.generic import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-@login_required
-def order_create(request):
-    cart = Cart(request)
-    if request.method == 'POST':
+class OrderCreateView(LoginRequiredMixin, View):
+    def get(self, request):
+        cart = Cart(request)
+        form = OrderCreateForm()
+        context = {
+            'cart': cart,
+            'form': form,
+        }
+        return render(request, 'orders/create.html', context=context)
+
+    def post(self, request):
+        cart = Cart(request)
         form = OrderCreateForm(request.POST)
         if form.is_valid():
             order = form.save()
@@ -21,10 +30,8 @@ def order_create(request):
                 )
             cart.clear()
             return redirect('cart:cart_detail')
-    else:
-        form = OrderCreateForm()
-    context = {
-        'cart': cart,
-        'form': form,
-    }
-    return render(request, 'orders/create.html', context=context)
+        context = {
+            'cart': cart,
+            'form': form,
+        }
+        return render(request, 'orders/create.html', context=context)

@@ -6,9 +6,11 @@ from goods.models import Product, Category
 from django.urls import reverse_lazy
 
 
+User = get_user_model()
+
+
 class CustomUserTests(TestCase):
     def test_create_user(self):
-        User = get_user_model()
         user = User.objects.create_user(
             username='will',
             email='will@email.com',
@@ -21,7 +23,6 @@ class CustomUserTests(TestCase):
         self.assertFalse(user.is_superuser)
 
     def test_create_superuser(self):
-        User = get_user_model()
         admin_user = User.objects.create_superuser(
             username='superadmin',
             email='superadmin@email.com',
@@ -58,7 +59,6 @@ class SignupTests(TestCase):
 
 class ProfileViewTestCase(TestCase):
     def setUp(self):
-        User = get_user_model()
         category = Category.objects.create(name='Test Category', slug='test-category')
         self.user = User.objects.create_user(
             username='testuser',
@@ -73,6 +73,7 @@ class ProfileViewTestCase(TestCase):
             category=category,
             price=10,
         )
+        self.client.login(username='testuser', password='testpass')
         self.url = reverse('accounts:profile', args=[self.user.username])
 
     def test_profile_view(self):
@@ -100,7 +101,7 @@ class ProfileViewTestCase(TestCase):
         self.assertEqual(response.context['products_count'], 1)
 
     def test_followers_count(self):
-        user2 = CustomUser.objects.create_user(
+        user2 = get_user_model().objects.create_user(
             username='testuser2',
             email='testuser2@example.com',
             password='testpass'
@@ -112,7 +113,7 @@ class ProfileViewTestCase(TestCase):
 
 class ProfileUpdateTestCase(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(
+        self.user = User.objects.create_user(
             username='testuser',
             email='testuser@example.com',
             password='testpass'

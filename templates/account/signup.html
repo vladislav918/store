@@ -11,4 +11,12 @@
         {{ form|crispy }}
         <button class="btn btn-success" type="submit">Sign Up</button>
     </form>
+    <form>
+        <!-- остальные поля формы -->
+        <select name="group">
+            {% for group in seller_groups %}
+            <option value="{{ group.id }}">{{ group.name }}</option>
+            {% endfor %}
+        </select>
+    </form>
 {% endblock content %}
