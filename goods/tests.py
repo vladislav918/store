@@ -1,7 +1,7 @@
 from mixer.backend.django import mixer
 from django.test import TestCase, RequestFactory, Client
 from django.urls import reverse
-from goods.models import Category, Product
+from goods.models import Category, Product, Rating
 from cart.forms import CartAddProductForm
 from goods.views import FavouritesListView
 from django.contrib.auth import get_user_model
@@ -204,3 +204,34 @@ class TestFavouritesListView(TestCase):
         self.assertEqual(len(queryset), 2)
         self.assertIn(self.product1, queryset[0])
         self.assertIn(self.product2, queryset[1])
+
+
+class RateProductTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_user(username='testuser', password='12345')
+        self.category = Category.objects.create(name='category', slug='category')
+        self.product = Product.objects.create(
+            name='product',
+            category=self.category,
+            slug='product',
+            price=10,
+            available=True
+        )
+
+    def test_rate_product(self):
+        self.client.login(username='testuser', password='12345')
+        url = reverse(
+            'goods:rate_product'
+        )
+        response = self.client.post(url, {'product_id': self.product.id, 'rating': 5})
+        self.assertEqual(response.status_code, 302)
+        rating = Rating.objects.get(user=self.user, product=self.product)
+        self.assertEqual(rating.rating, 5)
+
+    def test_rate_product_invalid_user(self):
+        url = reverse(
+            'goods:rate_product'
+        )
+        response = self.client.post(url, {'product_id': self.product.id, 'rating': 5})
+        self.assertEqual(response.status_code, 302)

@@ -78,6 +78,20 @@
                               <button type="submit" class="btn btn-danger text-uppercase mr-2 px-4">Add to cart</button> 
                             </form>
                           </div>
+                          <form method="post" action="{% url 'goods:rate_product' %}">
+                            {% csrf_token %}
+                            <a> {{ product.average_rating }}</a>
+                            {% if user.is_authenticated %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <select name="rating">
+                              {% for i in "12345" %}
+                                <option value="{{ i }}">{{ i }}</option>
+                              {% endfor %}
+                            </select>
+                            <input type="submit" value="Rating">
+                            {% endif %}
+
+                          </form>
                         </div>
                   </div>
                   <form method="post" action="{% url 'goods:product_detail' product.id product.slug %}">

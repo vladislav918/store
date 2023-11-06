@@ -1,12 +1,14 @@
 from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Q
-from .models import Category, Product
+from .models import Category, Product, Rating
 from cart.forms import CartAddProductForm
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.views.generic import DetailView, CreateView, UpdateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 
 class SearchResultsListView(ListView):
@@ -74,6 +76,7 @@ class ProductDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['cart_product_form'] = CartAddProductForm()
         context['is_favourite'] = False
+
         if self.object.favourites.filter(id=self.request.user.id).exists():
             context['is_favourite'] = True
         return context
@@ -116,4 +119,16 @@ class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     fields = ['category', 'name', 'description', 'image', 'price']
     success_message = 'Item successfully update!'
     template_name = 'goods/update_goods.html'
-    permission_required = 'goods.change_product'
+
+
+@login_required
+@require_POST
+def rate_product(request):
+    product_id = request.POST.get('product_id')
+    rating_value = request.POST.get('rating')
+    product = get_object_or_404(Product, id=product_id)
+
+    rating, created = Rating.objects.update_or_create(
+        product=product, user=request.user, defaults={'rating': rating_value}
+    )
+    return redirect('goods:product_detail', id=product.id, slug=product.slug)
