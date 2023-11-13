@@ -10,8 +10,8 @@ from django.contrib.auth import get_user_model
 class TestProductListViews(TestCase):
     def setUp(self):
         self.category = mixer.blend(Category)
-        self.product1 = mixer.blend(Product, category=self.category)
-        self.product2 = mixer.blend(Product, category=self.category, available=False)
+        self.product1 = mixer.blend(Product, category=self.category, description='')
+        self.product2 = mixer.blend(Product, category=self.category, description='', available=False)
         self.url = reverse('goods:product_list')
         self.url_with_category = reverse(
             'goods:product_list_by_category',
@@ -43,7 +43,7 @@ class TestProductListViews(TestCase):
 
 class SearchResultsListViewTestCase(TestCase):
     def setUp(self):
-        self.product1 = mixer.blend(Product, name='Test Product')
+        self.product1 = mixer.blend(Product, name='Test Product', description='')
 
     def test_valid_search_query(self):
         response = self.client.get(reverse('goods:search_results'), {'q': 'Test'})
@@ -173,6 +173,7 @@ class TestFavouritesListView(TestCase):
             name='product1',
             category=self.category1,
             slug='product1',
+            description='',
             price=10,
             available=True
         )
@@ -180,6 +181,7 @@ class TestFavouritesListView(TestCase):
             name='product2',
             category=self.category2,
             slug='product2',
+            description='',
             price=10,
             available=True
         )
