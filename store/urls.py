@@ -20,12 +20,14 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    # libraries
+    path('ckeditor5/', include('django_ckeditor_5.urls'), name='ck_editor_5_upload_file'),
+    path('__debug__/', include('debug_toolbar.urls')),
     # Django admin
     path('admin/', admin.site.urls),
     # User management
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),
-    path("__debug__/", include("debug_toolbar.urls")),
     # Local apps
     path('coupons/', include('coupons.urls', namespace='coupons')),
     path('cart/', include('cart.urls', namespace='cart')),

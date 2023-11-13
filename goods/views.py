@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from .forms import ProductForm
 
 
 class SearchResultsListView(ListView):
@@ -101,7 +102,7 @@ class FavouritesListView(LoginRequiredMixin, ListView):
 
 class ProductCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Product
-    fields = ['category', 'name', 'description', 'image', 'price']
+    form_class = ProductForm
     success_message = 'Item successfully added!'
     template_name = 'goods/create_goods.html'
 
@@ -116,7 +117,7 @@ class ProductCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Product
-    fields = ['category', 'name', 'description', 'image', 'price']
+    form_class = ProductForm
     success_message = 'Item successfully update!'
     template_name = 'goods/update_goods.html'
 

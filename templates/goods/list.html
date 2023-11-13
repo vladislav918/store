@@ -58,7 +58,7 @@
                 <div class="col-md-6 col-lg-6 col-xl-6">
                   <h5>{{ product.name }}</h5>
                   <p class="text-truncate mb-4 mb-md-0">
-                    {{ product.description }}
+                    {{ product.description|safe|truncatewords:"100" }}
                   </p>
                 </div>
                 <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
