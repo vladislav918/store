@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'orders.apps.OrdersConfig',
     'coupons.apps.CouponsConfig',
+    'converter.apps.ConverterConfig',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +85,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
                 'cart.context_processors.cart',
+                'converter.context_processors.currency',
             ],
         },
     },
@@ -184,6 +186,15 @@ REDIS_DB = 1
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        'LOCATION': 'redis://redis:6379/0',
+        'LOCATION': 'redis://redis:6379/1',
     }
+}
+
+# celery
+CELERY_BROKER_URL = 'redis://redis:6379/1'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
+CELERY_BEAT_SCHEDULE = {
+    'send_product_list-before-add-product': {
+        'task': 'accounts.tasks.send_product_list',
+    },
 }

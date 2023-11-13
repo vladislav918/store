@@ -5,6 +5,8 @@ from goods.models import Product
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, UpdateView
 from django.db.models import Prefetch
+from .tasks import send_product_list
+from django.http import HttpResponse
 
 
 class ProfileDetailView(DetailView):
@@ -59,3 +61,11 @@ class ProfileUpdate(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('accounts:profile', kwargs={'username': self.object.username})
+
+
+def send_email_user(request):
+    if request.user.is_authenticated:
+        send_product_list.delay(request.user.id)
+        return redirect('accounts:profile', username=request.user.username)
+    else:
+        return HttpResponse('User is not authenticated')

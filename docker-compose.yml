@@ -11,6 +11,7 @@ services:
     depends_on:
       - db
       - redis
+      - celery_worker
   db:
     image: postgres:13
     volumes:
@@ -19,5 +20,13 @@ services:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
   redis:
     image: redis:latest
+  celery_worker:
+    build: .
+    command: celery -A store worker --loglevel=info
+    volumes:
+      - .:/store
+    depends_on:
+      - db
+      - redis
 volumes:
   postgres_data:

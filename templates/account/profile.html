@@ -52,6 +52,9 @@
                     {% else %}
                       <a class="btn btn-primary" href="{% url 'accounts:profile_update' user.pk %}">Update</a>
                     {% endif %}
+                    <a class="btn btn-secondary" href="{% url 'accounts:send_email_user'%}">
+                      рассылка
+                    </a>
 
                   </div>
                 </div>

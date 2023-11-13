@@ -1,0 +1,14 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}
+  Live Quotes
+{% endblock %}
+
+{% block content %}
+<h1>Current Exchange Rate</h1>
+{% if live %}
+    <p>1 USD = {{ live }} EUR</p>
+{% endif %}
+
+{% endblock %}
