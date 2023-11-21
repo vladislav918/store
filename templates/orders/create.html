@@ -35,5 +35,9 @@
       </div>
     </div>
   </div>
+  <form action="{% url 'payment:process' %}" method="post">
+    <input value="Place order" type="submit" >
+    {% csrf_token %}
+  </form>
  
 {% endblock %}

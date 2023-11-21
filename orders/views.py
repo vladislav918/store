@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from .models import OrderItem
 from .forms import OrderCreateForm
 from cart.cart import Cart
@@ -29,7 +30,9 @@ class OrderCreateView(LoginRequiredMixin, View):
                     quantity=item['quantity']
                 )
             cart.clear()
-            return redirect('cart:cart_detail')
+            request.session['order_id'] = order.id
+            
+            return redirect(reverse('payment:process'))
         context = {
             'cart': cart,
             'form': form,

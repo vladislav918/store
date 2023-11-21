@@ -16,3 +16,4 @@ forex_python==1.8
 requests==2.31.0
 celery==5.2.3
 django-ckeditor-5==0.2.10
+stripe==4.0.2

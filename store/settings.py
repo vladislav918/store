@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'coupons.apps.CouponsConfig',
     'converter.apps.ConverterConfig',
+    'payment.apps.PaymentConfig',
 ]
 
 MIDDLEWARE = [
@@ -288,3 +289,8 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
+
+#stripe
+STRIPE_PUBLIC_KEY = "pk_test_51ODlUUKLVplS7yF3uzrwKEoQNuAdziLzbiGPT3ARrtE0KViHqjBedGRxYMmscTMJd0TBa7USCMRqPeFn83mTH8kb00uKD20vB4"
+STRIPE_SECRET_KEY = "sk_test_51ODlUUKLVplS7yF3uiwS8gSARDIUQ5aPWplAPCThaFUMTbpo27wwbn7cXlHHHQQ0nm1wsaV7PB8gJWo03j22dPgl00BbbJorOZ"
+STRIPE_WEBHOOK_SECRET = "whsec_5c50295965dc44efe4e6a2266c8e401807aca5d3bcbab1024911aeebaf772bb1"

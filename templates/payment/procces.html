@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Pay your order{% endblock %}
+
+{% block content %}
+
+  <form action="{% url 'payment:process' %}" method="post">
+    <input type="submit" value="Pay now">
+    {% csrf_token %}
+  </form>
+{% endblock %}
