@@ -29,9 +29,9 @@ class OrderCreateView(LoginRequiredMixin, View):
                     price=item['price'],
                     quantity=item['quantity']
                 )
-            cart.clear()
             request.session['order_id'] = order.id
-            
+            cart.clear()
+
             return redirect(reverse('payment:process'))
         context = {
             'cart': cart,

@@ -1,11 +1,10 @@
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
 from django.conf import settings
 from orders.models import Order
-
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
+from django.http import HttpResponse
+from cart.cart import Cart
+from .tasks import payment_completed
 
 
 @csrf_exempt
@@ -16,21 +15,20 @@ def stripe_webhook(request):
 
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-        )
+            payload,
+            sig_header,
+            settings.STRIPE_WEBHOOK_SECRET)
     except ValueError as e:
-        return JsonResponse({'error': str(e)}, status=400)
+        return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
-        return JsonResponse({'error': str(e)}, status=400)
+        return HttpResponse(status=400)
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        if session.mode == 'payment' and session.payment_status == 'paid':
-            try:
-                order = Order.objects.get(id=session.client_reference_id)
-            except Order.DoesNotExist:
-                return JsonResponse(status=404)
-            order.paid = True
-            order.save()  
+        order_id = session['metadata']['order_id']
+        order = Order.objects.get(id=order_id)
+        order.paid = True
+        order.save()
+        payment_completed.delay(session['customer_details']['email'])
 
-    return JsonResponse({'success': True}, status=200)
+    return HttpResponse(status=200)

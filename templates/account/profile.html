@@ -38,7 +38,6 @@
                     -->
                   </div>
                   <div class="d-flex pt-1">
-                    <button type="button" class="btn btn-outline-primary me-1 flex-grow-1">Chat</button>
                     {% if user.username != profile.username %}
                         {% if following %}
                             <a class="btn btn-secondary" href="{% url 'accounts:profile_unfollow' profile.username %}">
@@ -49,16 +48,19 @@
                                 Подписаться
                             </a>
                         {% endif %}
-                    {% else %}
-                      <a class="btn btn-primary" href="{% url 'accounts:profile_update' user.pk %}">Update</a>
                     {% endif %}
-                    <a class="btn btn-secondary" href="{% url 'accounts:send_email_user'%}">
-                      рассылка
-                    </a>
-
                   </div>
                 </div>
+                
               </div>
+              <ul class="list-group">
+                {% if user.username == profile.username %}
+                  <li class="list-group-item"><a class="btn btn-primary" href="{% url 'accounts:profile_update' user.pk %}">Update</a></li>
+                  <li class="list-group-item"><a class="btn btn-secondary" href="{% url 'accounts:send_email_user'%}">Mailing</a></li>
+                  <li class="list-group-item"><a class="btn btn-primary">Chat</a></li>
+
+                {% endif %}
+              </ul>
             </div>
           </div>
         </div>

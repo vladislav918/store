@@ -33,7 +33,7 @@ urlpatterns = [
     path('cart/', include('cart.urls', namespace='cart')),
     path('goods/', include('goods.urls', namespace='goods')),
     path('orders/', include('orders.urls', namespace='orders')),
-    path('', include('payment.urls', namespace='payment')),
+    path('payment/', include('payment.urls', namespace='payment')),
     path('', include('converter.urls', namespace='converter')),
     path('', include('pages.urls')),
 ]

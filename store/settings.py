@@ -158,6 +158,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 LOGIN_REDIRECT_URL = 'pages:home'
@@ -198,6 +200,9 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
 CELERY_BEAT_SCHEDULE = {
     'send_product_list-before-add-product': {
         'task': 'accounts.tasks.send_product_list',
+    },
+    'send_email_before_pay': {
+        'task': 'payment.tasks.payment_completed',
     },
 }
 
@@ -291,6 +296,7 @@ CKEDITOR_5_CONFIGS = {
 }
 
 #stripe
-STRIPE_PUBLIC_KEY = "pk_test_51ODlUUKLVplS7yF3uzrwKEoQNuAdziLzbiGPT3ARrtE0KViHqjBedGRxYMmscTMJd0TBa7USCMRqPeFn83mTH8kb00uKD20vB4"
-STRIPE_SECRET_KEY = "sk_test_51ODlUUKLVplS7yF3uiwS8gSARDIUQ5aPWplAPCThaFUMTbpo27wwbn7cXlHHHQQ0nm1wsaV7PB8gJWo03j22dPgl00BbbJorOZ"
-STRIPE_WEBHOOK_SECRET = "whsec_5c50295965dc44efe4e6a2266c8e401807aca5d3bcbab1024911aeebaf772bb1"
+STRIPE_PUBLIC_KEY = 'pk_test_51ODlUUKLVplS7yF3uzrwKEoQNuAdziLzbiGPT3ARrtE0KViHqjBedGRxYMmscTMJd0TBa7USCMRqPeFn83mTH8kb00uKD20vB4'
+STRIPE_SECRET_KEY = 'sk_test_51ODlUUKLVplS7yF3uiwS8gSARDIUQ5aPWplAPCThaFUMTbpo27wwbn7cXlHHHQQ0nm1wsaV7PB8gJWo03j22dPgl00BbbJorOZ'
+STRIPE_WEBHOOK_SECRET = 'whsec_5c50295965dc44efe4e6a2266c8e401807aca5d3bcbab1024911aeebaf772bb1'
+STRIPE_DEVICE_NAME = 'shop'

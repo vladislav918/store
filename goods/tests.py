@@ -11,7 +11,12 @@ class TestProductListViews(TestCase):
     def setUp(self):
         self.category = mixer.blend(Category)
         self.product1 = mixer.blend(Product, category=self.category, description='')
-        self.product2 = mixer.blend(Product, category=self.category, description='', available=False)
+        self.product2 = mixer.blend(
+            Product,
+            category=self.category,
+            description='',
+            available=False
+        )
         self.url = reverse('goods:product_list')
         self.url_with_category = reverse(
             'goods:product_list_by_category',
