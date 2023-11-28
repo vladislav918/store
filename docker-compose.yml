@@ -6,6 +6,8 @@ services:
     command: python /store/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/store
+    env_file:
+        - ./django_secrets.env
     ports:
       - 8000:8000
     depends_on:
@@ -25,6 +27,8 @@ services:
     command: celery -A store worker --loglevel=info
     volumes:
       - .:/store
+    env_file:
+      - ./django_secrets.env
     depends_on:
       - db
       - redis

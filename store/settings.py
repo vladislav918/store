@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import socket
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0%cjv)4u@4640e62n4jjjr*u7w^uzvzym!80!0%t6bt0j%npc@'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -102,11 +102,11 @@ WSGI_APPLICATION = 'store.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
+        'NAME': os.environ.get('NAME'),
+        'USER': os.environ.get('USER'),
+        'PASSWORD': os.environ.get('PASSWORD'),
+        'HOST': os.environ.get('HOST'),
+        'PORT': os.environ.get('PORT'),
     }
 }
 
@@ -183,20 +183,20 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 CART_SESSION_ID = 'cart'
 
 # redis
-REDIS_HOST = 'redis'
-REDIS_PORT = 6379
-REDIS_DB = 1
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
+REDIS_DB = os.environ.get('REDIS_DB')
 
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        'LOCATION': 'redis://redis:6379/1',
+        'LOCATION': os.environ.get('LOCATION'),
     }
 }
 
 # celery
-CELERY_BROKER_URL = 'redis://redis:6379/1'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
 CELERY_BEAT_SCHEDULE = {
     'send_product_list-before-add-product': {
         'task': 'accounts.tasks.send_product_list',
@@ -296,7 +296,7 @@ CKEDITOR_5_CONFIGS = {
 }
 
 #stripe
-STRIPE_PUBLIC_KEY = 'pk_test_51ODlUUKLVplS7yF3uzrwKEoQNuAdziLzbiGPT3ARrtE0KViHqjBedGRxYMmscTMJd0TBa7USCMRqPeFn83mTH8kb00uKD20vB4'
-STRIPE_SECRET_KEY = 'sk_test_51ODlUUKLVplS7yF3uiwS8gSARDIUQ5aPWplAPCThaFUMTbpo27wwbn7cXlHHHQQ0nm1wsaV7PB8gJWo03j22dPgl00BbbJorOZ'
-STRIPE_WEBHOOK_SECRET = 'whsec_5c50295965dc44efe4e6a2266c8e401807aca5d3bcbab1024911aeebaf772bb1'
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
 STRIPE_DEVICE_NAME = 'shop'
